@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+//option java_multiple_files = true;
+//option java_package = "io.grpc.examples.helloworld";
+//option java_outer_classname = "HelloWorldProto";
+//option objc_class_prefix = "HLW";
+
+package busservice;
+
+// 公交车充电曲线服务
+service BusChargingCurve {
+    // 获取充电桩实时充电曲线接口
+    rpc GetBusChargingCurve (BusChargingRequest) returns (BusChargingReply) {
+    }
+
+    rpc GetBusChargingSOCCurve (BusChargingSOCRequest) returns (BusChargingSOCReply) {
+    }
+}
+
+message BusChargingRequest {
+    string bus_id = 1;
+    float p_max = 2;
+    float p_min = 3;
+    float p_meas = 4;
+    float rated_mva = 5;      // 电池额定容量
+    float soc_meas = 6;            // SOC量测值
+    float soc_min = 7;         // SOC最小值设定值
+    float soc_max = 8;         // SOC最大值设定值
+    float coef_a = 9;
+    float coef_b = 10;
+    bool get_default_curves=11;    //获取默认曲线
+    repeated SOCSetting soc_settings = 12; // 全天各时段SOC限值设定
+}
+
+message BusChargingSOCRequest {
+    string bus_id = 1;
+    float p_max = 2;
+    float p_min = 3;
+    float p_meas = 4;
+    float rated_mva = 5;      // 电池额定容量
+    float soc_meas = 6;            // SOC量测值
+    float soc_min = 7;         // SOC最小值设定值
+    float soc_max = 8;         // SOC最大值设定值
+    float coef_a = 9;
+    float coef_b = 10;
+    bool get_default_curves=11;    //获取默认曲线
+    repeated SOCSetting soc_settings = 12; // 全天各时段SOC限值设定
+}
+
+// SOC限值信息
+message SOCSetting {
+    int32 start_hour = 1;           // 时段起始小时
+    int32 start_minute = 2;         // 时段起始分钟
+    int32 end_hour = 3;             // 时段结束小时
+    int32 end_minute = 4;           // 时段结束分钟
+    float soc_max = 5;              // 时段SOC上限
+    bool use_fixed_power = 6;       // 使用固定功率充电
+    float fixed_power = 7;          // 固定功率设定值
+    bool soc_max_priority = 8;      // 是否优先以最大功率充电至soc_max再以固定功率充电
+    // bool abs_or_rate = 9;           // 1 fixed_power是固定功率值 0 fixed_power是最大功率的百分比
+
+}
+
+// 充电曲线信息
+message BusChargingReply {
+    bool succ = 1;           // 请求是否成功
+    string message = 2;      // 返回字符串，请求失败时使用
+    repeated ChargingCurve curves = 3; // 充电曲线
+}
+
+message ChargingCurve {
+    int64 start_datetime = 1;   // 起始时间
+    int64 end_datetime = 2;     // 结束时间
+    float p = 3;               // 充电功率
+}
+
+message BusChargingSOCReply {
+    bool succ = 1;           // 请求是否成功
+    string message = 2;      // 返回字符串，请求失败时使用
+    repeated ChargingSOCCurve curves = 3; // 充电曲线
+}
+
+message ChargingSOCCurve {
+    int64 start_datetime = 1;   // 起始时间
+    int64 end_datetime = 2;     // 结束时间
+    float soc = 3;               // SOC
+}
