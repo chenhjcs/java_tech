@@ -1,0 +1,59 @@
+syntax = "proto3";
+package grpc;
+option java_package = "com.deri.grpc.bus";
+option java_outer_classname = "BusServiceProto";
+option java_multiple_files = true;
+
+//服务端接口类
+service BusLineService {
+    // 获取公交线路（上行或下行）的站点信息
+    rpc getBusStop (GetBusStopRequest) returns (GetBusStopRespone) {
+    }
+    // 获取公交线路实时车辆信息
+    rpc getBusPostion (GetBusPositionRequest) returns (GetBusPositionRespone) {
+    }
+}
+
+//请求参数
+message GetBusStopRequest {
+    string lineCode = 1;
+    int32 direction = 2;
+}
+
+//响应参数
+message CityBusLineStop {
+    string stopCode = 1;
+    string stopName = 2;
+    int32 stopOrder = 3;
+    double lon = 5;
+    double lat = 6;
+}
+
+message GetBusStopRespone {
+    string lineCode = 1;
+    int32 direction = 2;
+    repeated CityBusLineStop stops = 3;
+}
+
+//请求参数
+message GetBusPositionRequest {
+    string lineCode = 1;
+    int32 direction = 2;
+}
+
+//响应参数
+message BusPosition {
+    string busCode = 1;
+    double lon = 2;
+    double lat = 3;
+    int32 stationNo = 4;
+    int32 stationStatus = 5;
+}
+
+message GetBusPositionRespone {
+    string lineCode = 1;
+    int32 direction = 2;
+    repeated BusPosition buses = 3;
+}
+
+
